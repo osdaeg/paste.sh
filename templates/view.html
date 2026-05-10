@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ paste.title or paste.id }} — paste.sh{% endblock %}
+{% block content %}
+<div class="prompt">
+  <span class="cmd">cat</span> <span class="arg">./pastes/{{ paste.id }}</span>
+</div>
+
+<div class="paste-header">
+  <div class="paste-meta">
+    <h1>{{ paste.title or 'untitled' }}</h1>
+    <div class="meta-row">
+      <span>id <span class="val">{{ paste.id }}</span></span>
+      <span>lang <span class="val">{{ paste.language }}</span></span>
+      <span>views <span class="val">{{ paste.views }}</span></span>
+      <span>created <span class="val rel-time" data-ts="{{ paste.created_at }}">—</span></span>
+      {% if paste.expires_at %}
+      <span>expires <span class="val ttl-left" data-exp="{{ paste.expires_at }}">—</span></span>
+      {% else %}
+      <span>expires <span class="val" style="color:var(--dim)">never</span></span>
+      {% endif %}
+      {% if paste.archived %}
+      <span><span class="badge badge-archived">archived</span></span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="paste-actions">
+    <a href="/p/{{ paste.id }}/edit" class="btn btn-info">✎ edit</a>
+    {% if not paste.archived %}
+    <form method="post" action="/form/archive/{{ paste.id }}" style="display:inline">
+      <button class="btn btn-warn">⬇ archive</button>
+    </form>
+    {% else %}
+    <form method="post" action="/form/unarchive/{{ paste.id }}" style="display:inline">
+      <button class="btn btn-info">↑ restore</button>
+    </form>
+    {% endif %}
+    <form method="post" action="/form/delete/{{ paste.id }}" style="display:inline"
+          onsubmit="return confirm('Delete this paste permanently?')">
+      <button class="btn btn-danger">✕ delete</button>
+    </form>
+  </div>
+</div>
+
+<style>{{ pygments_css | safe }}</style>
+<div class="code-block">
+  <button class="copy-btn" onclick="copyPaste()">copy</button>
+  {{ highlighted_content | safe }}
+  <textarea id="paste-content" style="display:none">{{ paste.content | e }}</textarea>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyPaste() {
+  const text = document.getElementById('paste-content').value;
+  const btn = document.querySelector('.copy-btn');
+  const success = () => {
+    btn.textContent = 'copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(success);
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    success();
+  }
+}
+</script>
+{% endblock %}

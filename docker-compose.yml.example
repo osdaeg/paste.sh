@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  pastebin:
+    build: .
+    container_name: pastebin
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./data:/app/data
+      - ./exports:/app/exports
+    networks:
+      - TuRed
+    environment:
+      - PUID=1000
+      - PGID=1000
+
+networks:
+  TuRed:
+    external: true

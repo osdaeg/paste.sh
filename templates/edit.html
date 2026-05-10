@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{% if paste %}editar {{ paste.id }}{% else %}nuevo paste{% endif %} — paste.sh{% endblock %}
+
+{% block head_extra %}
+<style>
+/* ── CodeMirror integrado con estética terminal ── */
+.cm-editor {
+  height: 100%;
+  min-height: 320px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  border-radius: var(--radius);
+}
+.cm-editor.cm-focused { outline: none; }
+.cm-scroller { overflow: auto; }
+.cm-editor .cm-gutters {
+  background: var(--bg2) !important;
+  border-right: 1px solid var(--border) !important;
+  color: var(--dim) !important;
+  min-width: 44px;
+}
+.cm-editor .cm-activeLineGutter { background: rgba(57,211,83,0.05) !important; }
+.cm-editor .cm-activeLine       { background: rgba(57,211,83,0.03) !important; }
+.cm-editor .cm-cursor           { border-left-color: var(--accent) !important; }
+.cm-editor .cm-selectionBackground,
+.cm-editor.cm-focused .cm-selectionBackground {
+  background: rgba(57,211,83,0.15) !important;
+}
+.cm-editor .cm-content { caret-color: var(--accent); padding: 12px 0; }
+#cm-wrapper {
+  background: var(--bg) !important;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  transition: border-color 0.15s;
+}
+#cm-wrapper:focus-within { border-color: var(--green3); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="prompt">
+  <span class="cmd">{% if paste %}vim{% else %}touch{% endif %}</span>
+  <span class="arg">{% if paste %}./pastes/{{ paste.id }}{% else %}./pastes/nuevo{% endif %}</span>
+</div>
+
+<form method="post" action="{% if paste %}/form/update/{{ paste.id }}{% else %}/form/create{% endif %}" id="paste-form">
+  <div class="form-block">
+    <div class="form-row">
+      <div class="field">
+        <label>título</label>
+        <input type="text" name="title" placeholder="título opcional..."
+               value="{{ paste.title or '' if paste else '' }}" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>lenguaje</label>
+        <select name="language" id="lang-select">
+          {% set langs = ['plaintext','bash','python','javascript','typescript','json','yaml','toml','html','css','sql','go','rust','c','cpp','java','kotlin','ruby','php','dockerfile','nginx','markdown','xml'] %}
+          {% for l in langs %}
+          <option value="{{ l }}" {% if (paste and paste.language == l) or (not paste and l == 'plaintext') %}selected{% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>expira en</label>
+        <select name="ttl_seconds">
+          <option value="0" {% if not paste or not paste.expires_at %}selected{% endif %}>nunca</option>
+          <option value="3600">1 hora</option>
+          <option value="21600">6 horas</option>
+          <option value="86400">1 día</option>
+          <option value="604800">1 semana</option>
+          <option value="2592000">30 días</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>contenido</label>
+      <textarea name="content" id="content-hidden" style="display:none" required>{{ paste.content if paste else '' }}</textarea>
+      <div id="cm-wrapper"></div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        {% if paste %}↻ guardar cambios{% else %}+ crear paste{% endif %}
+      </button>
+      <a href="{% if paste %}/p/{{ paste.id }}{% else %}/{% endif %}" class="btn">✕ cancelar</a>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/editor.bundle.js"></script>
+<script>
+// El bundle expone initEditor como PasteEditor — se auto-ejecuta al cargar
+</script>
+{% endblock %}

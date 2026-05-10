@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}paste.sh — inicio{% endblock %}
+{% block content %}
+<div class="prompt">
+  <span class="cmd">ls</span> <span class="arg">-la ./pastes/</span>
+</div>
+
+{% if pastes %}
+<div class="section-title">activos ({{ pastes|length }})</div>
+<div class="paste-list">
+  {% for p in pastes %}
+  <a href="/p/{{ p.id }}" class="paste-row" style="text-decoration:none;color:inherit;">
+    <span class="paste-id">[{{ p.id }}]</span>
+    <span class="paste-title {% if not p.title %}untitled{% endif %}">
+      {{ p.title or 'sin título' }}
+    </span>
+    <span class="paste-lang">{{ p.language }}</span>
+    <span class="paste-time rel-time" data-ts="{{ p.created_at }}">—</span>
+    <span class="paste-ttl ttl-left" data-exp="{{ p.expires_at or '' }}">—</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="section-title">activos</div>
+<div class="empty">ningún paste todavía. <a href="/new">¿crear uno?</a></div>
+{% endif %}
+
+{% if archived %}
+<details>
+  <summary>archivados ({{ archived|length }})</summary>
+  <div class="paste-list">
+    {% for p in archived %}
+    <div class="paste-row">
+      <span class="paste-id" style="color:var(--muted)">[{{ p.id }}]</span>
+      <a href="/p/{{ p.id }}" class="paste-title {% if not p.title %}untitled{% endif %}" style="color:var(--muted)">
+        {{ p.title or 'sin título' }}
+      </a>
+      <span class="paste-lang" style="color:var(--dim)">{{ p.language }}</span>
+      <span class="paste-time rel-time" data-ts="{{ p.updated_at }}">—</span>
+      <span class="badge badge-archived">archivado</span>
+    </div>
+    {% endfor %}
+  </div>
+</details>
+{% endif %}
+{% endblock %}
