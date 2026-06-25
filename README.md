@@ -31,7 +31,7 @@ Pastebin autoalojado con estética de terminal, construido con FastAPI y SQLite.
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://codeberg.org/osdaeg/paste.sh
+git clone https://github.com/osdaeg/paste.sh
 cd paste.sh
 ```
 
@@ -119,7 +119,7 @@ paste dl <id> ~/Descargas/
 paste rm <id>
 ```
 
-### [Pastedrop Android](https://codeberg.org/osdaeg/Pastedrop)
+### [Pastedrop Android](https://github.com/osdaeg/Pastedrop)
 
 App Android offline-first. Se integra con el menú compartir del sistema — seleccioná texto en cualquier app, compartí a PasteDrop, y lo sube al servidor o lo guarda localmente si el servidor no está disponible.
 
@@ -128,7 +128,7 @@ App Android offline-first. Se integra con el menú compartir del sistema — sel
 - Edición abriendo el servidor en el navegador
 - Selección de lenguaje y TTL
 
-### [Pastedrop Plasmoid](https://codeberg.org/osdaeg/pastedrop-plasmoid)
+### [Pastedrop Plasmoid](https://github.com/osdaeg/pastedrop-plasmoid)
 
 Widget de panel para KDE Plasma 6. Arrastrá texto sobre el widget para crear un paste al instante. La URL se copia al portapapeles automáticamente.
 
