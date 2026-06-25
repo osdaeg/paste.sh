@@ -4,3 +4,11 @@ exports/*.*
 README.md.github
 
 README.md.codeberg
+
+backup_stack.sh
+
+pastebin.edit
+
+pastebin.list
+
+*.bak
